@@ -1,6 +1,4 @@
 import datetime, discord
-from discord.ext import commands
-import asyncio
 
 def time_ago_readable(input_days):
     difference_days  = (datetime.datetime.today() - input_days).days
