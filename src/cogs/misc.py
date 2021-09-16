@@ -21,7 +21,7 @@ class Misc(commands.Cog, name="Miscellaneous commands"):
             message = await ctx.send("ban")
             messages.append(message)
         
-        await asyncio.sleep(1)
+        await asyncio.sleep(10)
         
         for message in messages:
             await message.delete()
