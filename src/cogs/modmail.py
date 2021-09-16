@@ -26,7 +26,23 @@ class ModmailCommands(commands.Cog, name='Modmail Commands'):
             await ctx.send("Unable to find user ID in channel.")
             return
         await ctx.send(user_id)
-    
+     
+   
+    # this repeated code is painfull but i dont wanna break too much
+    async def user_function(self, ctx):
+        user_id = await get_id_from_thread(ctx.channel)
+        if user_id == None:
+            await ctx.send("Unable to find user ID in channel.")
+            return
+        await ctx.send(f"?user {user_id}")
+       
+    async def cases_function(self, ctx):
+        user_id = await get_id_from_thread(ctx.channel)
+        if user_id == None:
+            await ctx.send("Unable to find user ID in channel.")
+            return
+        await ctx.send(f"?cases {user_id}") 
+        
     async def operation(self, member, role_name):
         if discord.utils.get(self.bot.get_guild(781979349855371314).roles, name=role_name) in member.roles:
             return "remove"
@@ -140,6 +156,16 @@ class ModmailCommands(commands.Cog, name='Modmail Commands'):
     async def id_command(self, ctx:SlashContext):
         await self.id_function(ctx)
     
+    @cog_ext.cog_slash(name="user", description="Returns a copy-pasteable ?user <id> command", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def user_command(self, ctx:SlashContext):
+        await self.user_function(ctx)
+        
+    @cog_ext.cog_slash(name="cases", description="Returns a copy-pasteable ?cases <id> command", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def cases_command(self, ctx:SlashContext):
+        await self.cases_function(ctx)   
+        
     @cog_ext.cog_slash(name="roles", description="Displays role of thread creator", guild_ids=modmail_guild_id)
     @commands.has_role(829495730464882741) #Staff on modmail server
     async def roles_command(self, ctx:SlashContext):
