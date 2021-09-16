@@ -20,28 +20,19 @@ class ModmailCommands(commands.Cog, name='Modmail Commands'):
     # Misc functions
     # --------------------------------------------
     
-    async def id_function(self, ctx):
+    async def id_function(self, ctx, prefix):
         user_id = await get_id_from_thread(ctx.channel)
         if user_id == None:
             await ctx.send("Unable to find user ID in channel.")
             return
-        await ctx.send(user_id)
-     
-   
-    # this repeated code is painfull but i dont wanna break too much
-    async def user_function(self, ctx):
-        user_id = await get_id_from_thread(ctx.channel)
-        if user_id == None:
-            await ctx.send("Unable to find user ID in channel.")
+        # just return the id
+        if prefix is None:
+            await ctx.send(user_id)
             return
-        await ctx.send(f"?user {user_id}")
-       
-    async def cases_function(self, ctx):
-        user_id = await get_id_from_thread(ctx.channel)
-        if user_id == None:
-            await ctx.send("Unable to find user ID in channel.")
-            return
-        await ctx.send(f"?cases {user_id}") 
+        if prefix == "ban" or prefix == "warn":
+            await ctx.send("Please leave a reason with quotes, using proper SPAG.")
+            
+        await ctx.send(f"?{prefix} {user_id}")
         
     async def operation(self, member, role_name):
         if discord.utils.get(self.bot.get_guild(781979349855371314).roles, name=role_name) in member.roles:
@@ -150,21 +141,6 @@ class ModmailCommands(commands.Cog, name='Modmail Commands'):
     @commands.has_role(829495730464882741) #Staff on modmail server
     async def info_command(self, ctx:SlashContext):
         await self.info_function(ctx)   
-
-    @cog_ext.cog_slash(name="id", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
-    @commands.has_role(829495730464882741) #Staff on modmail server
-    async def id_command(self, ctx:SlashContext):
-        await self.id_function(ctx)
-    
-    @cog_ext.cog_slash(name="user", description="Returns a copy-pasteable ?user <id> command", guild_ids=modmail_guild_id)
-    @commands.has_role(829495730464882741) #Staff on modmail server
-    async def user_command(self, ctx:SlashContext):
-        await self.user_function(ctx)
-        
-    @cog_ext.cog_slash(name="cases", description="Returns a copy-pasteable ?cases <id> command", guild_ids=modmail_guild_id)
-    @commands.has_role(829495730464882741) #Staff on modmail server
-    async def cases_command(self, ctx:SlashContext):
-        await self.cases_function(ctx)   
         
     @cog_ext.cog_slash(name="roles", description="Displays role of thread creator", guild_ids=modmail_guild_id)
     @commands.has_role(829495730464882741) #Staff on modmail server
@@ -184,8 +160,42 @@ class ModmailCommands(commands.Cog, name='Modmail Commands'):
         embed, dropdown = await self.roles_message(member)
         
         await ctx.origin_message.edit(content=content, embed=embed, components=[create_actionrow(dropdown)])
- 
-
+        
+        
+    # --------------------------------------------
+    # Slash commmands that return a copy-pasteable command for zep on the main server
+    # --------------------------------------------
+    
+    # <id>
+    @cog_ext.cog_slash(name="id", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def id_command(self, ctx:SlashContext):
+        await self.id_function(ctx, None)
+    
+    # ?cases <id>
+    @cog_ext.cog_slash(name="cases", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def id_command(self, ctx:SlashContext):
+        await self.id_function(ctx, "cases")
+        
+    # ?user <id>
+    @cog_ext.cog_slash(name="user", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def id_command(self, ctx:SlashContext):
+        await self.id_function(ctx, "user")
+        
+    # ?warn <id>
+    @cog_ext.cog_slash(name="warn", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def id_command(self, ctx:SlashContext):
+        await self.id_function(ctx, "warn")    
+      
+    # ?ban <id>
+    @cog_ext.cog_slash(name="ban", description="Fetches ID of thread creator", guild_ids=modmail_guild_id)
+    @commands.has_role(829495730464882741) #Staff on modmail server
+    async def id_command(self, ctx:SlashContext):
+        await self.id_function(ctx, "ban")
+        
     # --------------------------------------------
     # Control panel command and functions to receive button inputs
     # --------------------------------------------
